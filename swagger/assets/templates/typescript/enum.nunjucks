@@ -1,0 +1,5 @@
+export enum {{enum.key}}{ 
+    {%for value in enum.value.enum%}
+     {{value}} ="{{value}}",
+    {%endfor%}   
+}
