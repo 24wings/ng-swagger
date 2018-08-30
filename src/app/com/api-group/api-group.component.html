@@ -1,0 +1,15 @@
+<h3>{{title}}</h3>
+<nz-progress style="width:100%" [nzPercent]="percent" [nzStatus]="status">
+</nz-progress>
+
+<nz-radio-group>
+    <button nz-button nzType="primary" (click)="clear()">清除</button>
+    <button nz-button (click)="start()">自动测试</button>
+    <button nz-button (click)="exportData()">导出</button>
+</nz-radio-group>
+<nz-collapse [nzBordered]="false">
+    <nz-collapse [nzBordered]="false" *ngFor="let api of apis">
+        <app-api-request [api]="api" (apiChange)="updateState($event)" #apiCom></app-api-request>
+    </nz-collapse>
+
+</nz-collapse>

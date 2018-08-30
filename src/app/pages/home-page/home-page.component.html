@@ -1,0 +1,161 @@
+<div class="container">
+    <div style="text-align: right">
+        <button nz-button nzType="primary" (click)="importDataModalVisible=true">导入</button>
+        <button nz-button nzType="primary" (click)="download()">下载</button>
+    </div>
+</div>
+<div nz-row style="margin-top:100px">
+    <div nz-col nzSpan="6"></div>
+    <div nz-col nzSpan="12">
+        <nz-input-group nzSuffixIcon="anticon anticon-search">
+
+            <input type="search" nz-input placeholder="关键字" [(ngModel)]="keywords" (search)="searchByKeyword()">
+
+        </nz-input-group>
+    </div>
+</div>
+
+<div class="text-center" style="margin-top: 60px;">
+    <nz-tag [nzColor]="'#108ee9'" (click)="checkTypes();state=View.All" [nzChecked]="state==View.All" [nzMode]="'checkable'">全部</nz-tag>
+    <nz-tag [nzColor]="'green'" (click)="checkTypes(View.Enum);state=View.Enum" [nzChecked]="state==View.Enum" [nzMode]="'checkable'">枚举</nz-tag>
+    <nz-tag [nzColor]="'green'" (click)="checkTypes(View.Entity);state=View.Entity" [nzChecked]="state==View.Entity" [nzMode]="'checkable'">实体</nz-tag>
+    <nz-tag [nzColor]="'green'" (click)="checkTypes(View.Api);state=View.Api" [nzChecked]="state==View.Api" [nzMode]="'checkable'">接口</nz-tag>
+    <nz-tag [nzColor]="'green'" (click)="checkTypes(View.Service);state=View.Service" [nzChecked]="state==View.Service" [nzMode]="'checkable'">服务</nz-tag>
+</div>
+
+<div class="container" *ngIf="state==View.All||state==View.Enum">
+    <h2 class="group-title">枚举
+        <nz-badge [nzCount]="objectKeys(totalEnums).length"></nz-badge>
+    </h2>
+    <nz-divider></nz-divider>
+    <div nz-row>
+        <div nz-col nzSpan="8" (click)="logEnum(key,totalEnums[key])" *ngFor="let key of (objectKeys(totalEnums)|keyword:keywords)" class="name">
+            <span class="symbol enum"></span> {{key}}
+        </div>
+    </div>
+</div>
+<div class="container">
+    <h2 class="group-title">实体
+        <nz-badge [nzCount]="objectKeys(totalClass).length"></nz-badge>
+    </h2>
+    <nz-divider></nz-divider>
+    <div nz-row>
+        <div nz-col nzSpan="8" (click)="logModel(key,totalClass[key])" *ngFor="let key of (objectKeys(totalClass)|keyword:keywords)" class="name">
+            <span class="symbol model"></span> {{key}}
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div style="display: flex;justify-content: space-between;">
+        <h2 class="group-title">Api标签
+            <nz-badge [nzCount]="objectKeys(totalTags).length"></nz-badge>
+        </h2>
+        <nz-switch [(ngModel)]="multiApi" nzCheckedChildren="多选" nzUnCheckedChildren="单选"></nz-switch>
+    </div>
+    <nz-divider></nz-divider>
+    <div nz-row>
+        <nz-tag class="name text-center" nz-tooltip [nzTitle]="totalTags[tag].description" nz-col nzSpan="6" (nzCheckedChange)="apiTagCheck(totalTags[tag])" nzMode="checkable" [nzChecked]="totalTags[tag].checked" *ngFor="let tag of (objectKeys(totalTags)|keyword:keywords)">{{totalTags[tag].name}}</nz-tag>
+    </div>
+</div>
+<div class="container">
+    <nz-divider></nz-divider>
+    <div nz-row>
+        <h2 class="group-title">Http接口
+            <nz-badge [nzCount]="(objectKeys(displayPathObject)|keyword:keywords).length"></nz-badge>
+        </h2>
+        <div nz-col (click)="logApi(key,displayPathObject[key])" nzSpan="6" *ngFor="let key of (objectKeys(displayPathObject)|keyword:keywords)" class="name">
+            <ng-container *ngIf="displayPathObject[key].get">
+                <span class="symbol get"></span> {{key}}
+            </ng-container>
+            <ng-container *ngIf="displayPathObject[key].post">
+                <span class="symbol post"></span> {{key}}
+            </ng-container>
+
+        </div>
+    </div>
+</div>
+
+
+
+<ng-container *ngIf="selectedData">
+    <nz-modal [(nzVisible)]="visible" [nzWidth]="1000" [nzTitle]="getModalTitle()" (nzOnCancel)="visible=false;" (nzOnOk)="visible=false">
+        <ng-container [ngSwitch]="selectedData.type">
+            <ng-container *ngSwitchCase="'enum'">
+
+                <div nz-row>
+
+                    <code nz-col nzSpan="12"> 
+                            <h2>java</h2>
+                            <pre>
+{{javaAdapter.getEnumTemplate(selectedData.data.key,selectedData.data.value)}}
+                            </pre>
+                            </code>
+
+                    <code nz-col nzSpan="12">
+                        <h2>typescript</h2>
+                        <pre>
+{{tsAdapter.getEnumTemplate(selectedData.data.key,selectedData.data.value)}}
+</pre>
+                    </code>
+
+                </div>
+            </ng-container>
+            <!-- model -->
+            <div *ngSwitchCase="'model'">
+                <div nz-row>
+
+                    <code nz-col nzSpan="12"> 
+                                    <h2>java</h2>
+                                    <pre>
+{{javaAdapter.getModelTemplate(selectedData.data.key,selectedData.data.value)}}
+                                    </pre>
+                                    </code>
+
+                    <code nz-col nzSpan="12">
+                                <h2>typescript</h2>
+                                <pre>
+{{tsAdapter.getModelTemplate(selectedData.data.key,selectedData.data.value)}}
+        </pre>
+                            </code>
+
+                </div>
+            </div>
+            <div *ngSwitchCase="'api'">
+                <div>路径:{{selectedData.data.key}}</div>
+                <div>请求方法: <span *ngIf="selectedData.data.value.get" class="symbol get"></span>
+                    <span *ngIf="selectedData.data.value.post" class="symbol post"></span>
+
+                </div>
+                <ng-container *ngIf="getSelelectQueryParams().length>0">
+                    query:
+                    <div *ngFor="let param of getSelelectQueryParams() ">
+                        {{param| json}}
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="getSelelectBodyParams() .length>0"></ng-container>
+                <div *ngFor="let param of getSelelectBodyParams() ">
+                    {{param| json}}
+                </div>
+            </div>
+            <div *ngSwitchCase="'controller'">
+                controller
+            </div>
+            <p *ngSwitchDefault>
+                未知
+            </p>
+
+        </ng-container>
+    </nz-modal>
+</ng-container>
+
+
+
+<h4>待添加特性</h4>
+<nz-checkbox-group [(ngModel)]="checkOptionsOne" (ngModelChange)="log(checkOptionsOne)"></nz-checkbox-group>
+
+<nz-modal [nzVisible]="importDataModalVisible" [nzTitle]="'导入数据'" (nzOnOk)="importDataModalVisible=false;onEnter()" (nzOnCancel)="importDataModalVisible=false">
+
+    <input type="search" nz-input placeholder="swagger url address" [(ngModel)]="url" (search)="onEnter()">
+
+</nz-modal>

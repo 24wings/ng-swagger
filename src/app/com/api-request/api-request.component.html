@@ -1,0 +1,42 @@
+<div *ngIf="api">
+    <h4><span class="symbol get"></span> {{api.url}} <span style="float: right;">{{api.title}}</span></h4>
+    <!-- 工具条 -->
+    <div style="display: flex;">
+        <nz-progress style="width:100%" [nzPercent]="api.percent" [nzStatus]="api.status"></nz-progress>
+        <div style="flex-shrink: 0">
+            <button nz-button nzType="primary" (click)="start()">启动</button>
+        </div>
+    </div>
+    <div class="text-center pointer" *ngIf="!isOpen" (click)="isOpen=true">
+        <i class="anticon anticon-caret-down"></i>
+    </div>
+
+    <!-- 开关详情 -->
+    <div class="" *ngIf="isOpen">
+        <div class="text-center">
+            <i class="anticon anticon-caret-up pointer" (click)="isOpen=false"></i>
+        </div>
+        <div style="display:flex">
+            <div style="flex:1">
+                Query:
+                <textarea style="width:100%;" [(ngModel)]="queryString" name="" id="" cols="30" rows="10"></textarea>
+            </div>
+            <div style="flex:1">
+                Body:
+                <br>
+                <textarea style="width:100%;" name="" id="" cols="30" rows="10"></textarea>
+            </div>
+        </div>
+        <span>{{api.url}}{{queryString}}</span>
+        <div class="result">
+            header
+            <hr> {{header| json}}
+            <br> body
+            <hr> {{api.res|json}}
+
+        </div>
+        <div>
+
+        </div>
+    </div>
+</div>
