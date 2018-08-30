@@ -16,11 +16,11 @@
 </div>
 
 <div class="text-center" style="margin-top: 60px;">
-    <nz-tag [nzColor]="'#108ee9'" (click)="checkTypes();state=View.All" [nzChecked]="state==View.All" [nzMode]="'checkable'">全部</nz-tag>
-    <nz-tag [nzColor]="'green'" (click)="checkTypes(View.Enum);state=View.Enum" [nzChecked]="state==View.Enum" [nzMode]="'checkable'">枚举</nz-tag>
-    <nz-tag [nzColor]="'green'" (click)="checkTypes(View.Entity);state=View.Entity" [nzChecked]="state==View.Entity" [nzMode]="'checkable'">实体</nz-tag>
-    <nz-tag [nzColor]="'green'" (click)="checkTypes(View.Api);state=View.Api" [nzChecked]="state==View.Api" [nzMode]="'checkable'">接口</nz-tag>
-    <nz-tag [nzColor]="'green'" (click)="checkTypes(View.Service);state=View.Service" [nzChecked]="state==View.Service" [nzMode]="'checkable'">服务</nz-tag>
+    <nz-tag [nzColor]="'#108ee9'" (click)="checkTypes();state=View.All" [nzChecked]="View.All==state" [nzMode]="'checkable'">全部</nz-tag>
+    <nz-tag [nzColor]="'green'" (click)="checkTypes('enum');state=View.Enum" [nzChecked]="state==View.Enum" [nzMode]="'checkable'">枚举</nz-tag>
+    <nz-tag [nzColor]="'green'" (click)="checkTypes('model');state=View.Entity" [nzChecked]="View.Entity==state" [nzMode]="'checkable'">实体</nz-tag>
+    <nz-tag [nzColor]="'green'" (click)="checkTypes('api');state=View.Api" [nzChecked]="View.Api==state" [nzMode]="'checkable'">接口</nz-tag>
+    <nz-tag [nzColor]="'green'" (click)="checkTypes('controller');state=View.Service" [nzChecked]="View.Service==state" [nzMode]="'checkable'">服务</nz-tag>
 </div>
 
 <div class="container" *ngIf="state==View.All||state==View.Enum">
