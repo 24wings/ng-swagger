@@ -11,10 +11,15 @@ export class TypescriptTemplateAdapter implements TemplateAdapter {
         `;
 
     }
+    // getModelTemplate(key: string, modelValue: ApiModel): string {
+    //     return `export class ${key} {
+    //     ${Object.keys(modelValue.properties).map(key => key + ":" + this.swaggerParser.getModelType(this.swaggerParser.getType(modelValue.properties[key].type, modelValue.properties[key], key))).join('\n        ')}
+    //     }`}
     getModelTemplate(key: string, modelValue: ApiModel): string {
         return `export class ${key} {
-        ${Object.keys(modelValue.properties).map(key => key + ":" + this.swaggerParser.getModelType(this.swaggerParser.getType(modelValue.properties[key].type, modelValue.properties[key], key))).join('\n        ')}
-        }`}
+                
+            ${Object.keys(modelValue.properties).map(key => `/**${modelValue.properties[key].description} */` + '\n' + key + ":" + this.swaggerParser.getModelType(this.swaggerParser.getType(modelValue.properties[key].type, modelValue.properties[key], key))).join('\n        ')}
+            }`}
     getImportEnum(modelName: string, model: ApiModel): string {
         console.log(`modelname;${modelName}`)
         let str: string[] = []
